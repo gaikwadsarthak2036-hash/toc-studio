@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}NFA Simulator &mdash; TOC Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="sim-header">
+  <p class="eyebrow">Module 4 of 9</p>
+  <h1>NFA Simulator</h1>
+  <p class="sim-intro">Build a Non-deterministic Finite Automaton and watch every active state get tracked at once.</p>
+</section>
+
+<section class="sim-panel">
+  <div class="sim-io">
+    <form id="nfaForm" class="sim-form" autocomplete="off">
+      <div class="builder-grid">
+        <div class="builder-fields">
+          <div class="field"><label for="states">States</label><input type="text" id="states" placeholder="q0, q1, q2"></div>
+          <div class="field"><label for="alphabet">Alphabet</label><input type="text" id="alphabet" placeholder="0, 1"></div>
+          <div class="field"><label for="startState">Start state</label><input type="text" id="startState" placeholder="q0"></div>
+          <div class="field"><label for="finalStates">Final states</label><input type="text" id="finalStates" placeholder="q2"></div>
+          <div class="field"><label for="inputString">Input string</label><input type="text" id="inputString" placeholder="1001"></div>
+        </div>
+        <div>
+          <label class="field-hint" style="display:block;margin-bottom:0.5rem;">Transitions &mdash; "To" can list multiple states, e.g. "q0, q1"</label>
+          <div id="transitionsEditor"></div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Run</button>
+        <span id="formError" class="form-error" role="alert" aria-live="polite"></span>
+      </div>
+    </form>
+
+  </div>
+
+  <div id="results" class="results" hidden>
+    <div class="run-layout">
+      <div><div id="graphContainer"></div></div>
+      <div>
+        <div class="sim-controls">
+          <button type="button" class="btn btn-ghost" id="btnStep">Step</button>
+          <button type="button" class="btn btn-ghost" id="btnRun">Run</button>
+          <button type="button" class="btn btn-ghost" id="btnPause">Pause</button>
+          <button type="button" class="btn btn-ghost" id="btnReset">Reset</button>
+          <span class="step-counter" id="stepCounter"></span>
+        </div>
+        <div id="verdict"></div>
+        <div id="simLog" class="sim-log"></div>
+      </div>
+    </div>
+    <h3 class="subhead">Transition table</h3>
+    <div class="transition-table-wrap" id="tableContainer"></div>
+  </div>
+</section>
+
+<section class="sim-info">
+  <p class="eyebrow">What is an NFA?</p>
+  <h2 class="section-title">Definition &amp; key terms</h2>
+  <div class="info-grid">
+    <div><h4>Definition</h4><p>A Non-deterministic Finite Automaton allows a state/symbol pair to lead to zero, one, or several next states.</p></div>
+    <div><h4>How it's simulated</h4><p>Instead of picking one path, the simulator tracks the whole <em>set</em> of states the machine could be in after each symbol.</p></div>
+    <div><h4>Accept / Reject</h4><p>The string is accepted if <strong>at least one</strong> state in the final active set is a final state.</p></div>
+    <div><h4>Why it matters</h4><p>Every NFA has an equivalent DFA (via the subset construction), but NFAs are often far easier to design by hand.</p></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/visualization.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nfa.js') }}"></script>
+{% endblock %}

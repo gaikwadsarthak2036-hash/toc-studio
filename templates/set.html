@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Set Operations Simulator &mdash; TOC Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="sim-header">
+  <p class="eyebrow">Module 1 of 9</p>
+  <h1>Set Operations Simulator</h1>
+  <p class="sim-intro">
+    Enter two sets and see every standard set operation calculated and
+    written out in proper set notation.
+  </p>
+</section>
+
+<section class="sim-panel">
+  <div class="sim-io">
+
+    <form id="setForm" class="sim-form" autocomplete="off">
+      <div class="field">
+        <label for="setA">Set A</label>
+        <input type="text" id="setA" name="set_a" maxlength="1000" placeholder="e.g. 1, 2, 3" value="1, 2, 3">
+        <p class="field-hint">Maximum 50 unique elements. Comma-separated. Braces are optional: <code>{1,2,3}</code> or <code>1,2,3</code>.</p>
+      </div>
+
+      <div class="field">
+        <label for="setB">Set B</label>
+        <input type="text" id="setB" name="set_b" maxlength="1000" placeholder="e.g. 2, 3, 4" value="2, 3, 4">
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Compute</button>
+        <span id="formError" class="form-error" role="alert" aria-live="polite"></span>
+      </div>
+    </form>
+
+    <div class="examples">
+      <p class="examples-label">Load an example</p>
+      <div class="example-chips">
+        {% for ex in examples %}
+        <button type="button" class="chip" data-set-a="{{ ex.set_a }}" data-set-b="{{ ex.set_b }}">{{ ex.label }}</button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div id="results" class="results" hidden>
+    <div class="result-row headline">
+      <div class="result-card"><span class="result-label">A</span><span id="out-set-a" class="result-value mono"></span></div>
+      <div class="result-card"><span class="result-label">B</span><span id="out-set-b" class="result-value mono"></span></div>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-card"><span class="result-label">A &cup; B &mdash; Union</span><span id="out-union" class="result-value mono"></span></div>
+      <div class="result-card"><span class="result-label">A &cap; B &mdash; Intersection</span><span id="out-intersection" class="result-value mono"></span></div>
+      <div class="result-card"><span class="result-label">A &minus; B &mdash; Difference</span><span id="out-diff-ab" class="result-value mono"></span></div>
+      <div class="result-card"><span class="result-label">B &minus; A &mdash; Difference</span><span id="out-diff-ba" class="result-value mono"></span></div>
+      <div class="result-card"><span class="result-label">A &oplus; B &mdash; Symmetric Difference</span><span id="out-symdiff" class="result-value mono"></span></div>
+      <div class="result-card wide"><span class="result-label">A &times; B &mdash; Cartesian Product</span><span id="out-cartesian" class="result-value mono"></span></div>
+    </div>
+
+
+
+    <h3 class="subhead">Visualizations</h3>
+    <p class="viz-intro">Each operation is visualized independently. Each diagram shows only the elements that belong to that operation's result.</p>
+    <div id="setVisualizations" class="set-viz-grid"></div>
+
+    <h3 class="subhead">Subset &amp; superset checks</h3>
+    <div class="check-grid">
+      <div class="check-row"><span>A &sube; B</span><span id="chk-a-sub-b" class="badge"></span></div>
+      <div class="check-row"><span>B &sube; A</span><span id="chk-b-sub-a" class="badge"></span></div>
+      <div class="check-row"><span>A &subset; B (proper)</span><span id="chk-a-propersub-b" class="badge"></span></div>
+      <div class="check-row"><span>B &subset; A (proper)</span><span id="chk-b-propersub-a" class="badge"></span></div>
+      <div class="check-row"><span>A &supe; B</span><span id="chk-a-super-b" class="badge"></span></div>
+      <div class="check-row"><span>B &supe; A</span><span id="chk-b-super-a" class="badge"></span></div>
+    </div>
+
+    <h3 class="subhead">Power sets</h3>
+    <div class="result-grid">
+      <div class="result-card wide"><span class="result-label">P(A) &mdash; <span id="out-powerset-a-size"></span> subsets</span><span id="out-powerset-a" class="result-value mono"></span></div>
+      <div class="result-card wide"><span class="result-label">P(B) &mdash; <span id="out-powerset-b-size"></span> subsets</span><span id="out-powerset-b" class="result-value mono"></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sim-info">
+  <p class="eyebrow">What is a Set?</p>
+  <h2 class="section-title">Definition &amp; key terms</h2>
+  <div class="info-grid">
+    <div>
+      <h4>Definition</h4>
+      <p>A set is an unordered collection of distinct elements. Writing the same element twice, like {1, 1, 2}, doesn't create a second copy &mdash; it's still just {1, 2}.</p>
+    </div>
+    <div>
+      <h4>Union &amp; Intersection</h4>
+      <p><strong>A &cup; B</strong> collects every element that appears in A, in B, or in both. <strong>A &cap; B</strong> keeps only elements that appear in both sets.</p>
+    </div>
+    <div>
+      <h4>Difference</h4>
+      <p><strong>A &minus; B</strong> keeps elements of A that are <em>not</em> in B. It isn't symmetric: A &minus; B and B &minus; A are usually different sets.</p>
+    </div>
+    <div>
+      <h4>Power Set</h4>
+      <p>The power set P(A) is the set of <em>all</em> subsets of A, including the empty set and A itself. A set with n elements has exactly 2<sup>n</sup> subsets.</p>
+    </div>
+  </div>
+  <h4>How this simulator works</h4>
+  <p>Type Set A and Set B as comma-separated elements and press Compute. The backend parses both sets, removes duplicates, runs every operation, and sends the results back to be displayed here &mdash; nothing is calculated by guesswork, and every result is a real Python set operation.</p>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/set.js') }}"></script>
+{% endblock %}

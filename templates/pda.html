@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}PDA Simulator &mdash; TOC Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="sim-header">
+  <p class="eyebrow">Module 8 of 9</p>
+  <h1>PDA Simulator</h1>
+  <p class="sim-intro">Build a Pushdown Automaton and watch the stack grow and shrink as it reads the input, symbol by symbol.</p>
+</section>
+
+<section class="sim-panel">
+  <div class="sim-io">
+    <form id="pdaForm" class="sim-form" autocomplete="off">
+      <div class="builder-grid">
+        <div class="builder-fields">
+          <div class="field"><label for="states">States</label><input type="text" id="states" placeholder="q0, q1, q2"></div>
+          <div class="field"><label for="inputAlphabet">Input alphabet</label><input type="text" id="inputAlphabet" placeholder="a, b"></div>
+          <div class="field"><label for="stackAlphabet">Stack alphabet</label><input type="text" id="stackAlphabet" placeholder="Z, A"></div>
+          <div class="field"><label for="startState">Start state</label><input type="text" id="startState" placeholder="q0"></div>
+          <div class="field"><label for="initialStackSymbol">Initial stack symbol</label><input type="text" id="initialStackSymbol" placeholder="Z"></div>
+          <div class="field"><label for="finalStates">Final states</label><input type="text" id="finalStates" placeholder="q2"></div>
+          <div class="field"><label for="inputString">Input string</label><input type="text" id="inputString" placeholder="aaabbb"></div>
+        </div>
+        <div>
+          <label class="field-hint" style="display:block;margin-bottom:0.5rem;">Transitions &mdash; symbol/push may be "eps"; push is read left-to-right, last character ends on top</label>
+          <div id="transitionsEditor"></div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Run</button>
+        <span id="formError" class="form-error" role="alert" aria-live="polite"></span>
+      </div>
+    </form>
+
+    <div class="examples">
+      <p class="examples-label">Load an example</p>
+      <div class="example-chips">
+        {% for ex in examples %}
+        <button type="button" class="chip" data-example="{{ loop.index0 }}">{{ ex.label }}</button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div id="results" class="results" hidden>
+    <div id="verdict"></div>
+    <div class="run-layout">
+      <div>
+        <h3 class="subhead">Stack</h3>
+        <div id="stackDisplay" class="stack-display"></div>
+      </div>
+      <div>
+        <div class="sim-controls">
+          <button type="button" class="btn btn-ghost" id="btnStep">Step</button>
+          <button type="button" class="btn btn-ghost" id="btnRun">Run</button>
+          <button type="button" class="btn btn-ghost" id="btnPause">Pause</button>
+          <button type="button" class="btn btn-ghost" id="btnReset">Reset</button>
+          <span class="step-counter" id="stepCounter"></span>
+        </div>
+        <p class="field-hint" id="remainingInput"></p>
+        <div id="simLog" class="sim-log"></div>
+      </div>
+    </div>
+
+    <h3 class="subhead">Transitions used in this run</h3>
+    <div class="transition-table-wrap" id="tableContainer"></div>
+  </div>
+</section>
+
+<section class="sim-info">
+  <p class="eyebrow">What is a PDA?</p>
+  <h2 class="section-title">Definition &amp; key terms</h2>
+  <div class="info-grid">
+    <div><h4>Definition</h4><p>A Pushdown Automaton is a finite automaton equipped with a stack, giving it memory an ordinary NFA doesn't have.</p></div>
+    <div><h4>Push / pop</h4><p>Each transition looks at the current state, the next input symbol (or epsilon), and the top of the stack, then moves and replaces that top symbol with zero or more new symbols.</p></div>
+    <div><h4>Why a stack?</h4><p>It lets a PDA recognize languages a DFA/NFA can't, like balanced parentheses or a<sup>n</sup>b<sup>n</sup>, by "counting" with pushes and pops.</p></div>
+    <div><h4>How this simulator works</h4><p>Because PDAs can be non-deterministic, the simulator searches all possible runs and shows one that accepts (by final state) if one exists.</p></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>window.PDA_EXAMPLES = {{ examples | tojson }};</script>
+<script src="{{ url_for('static', filename='js/visualization.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pda.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}DFA Simulator &mdash; TOC Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="sim-header">
+  <p class="eyebrow">Module 3 of 9</p>
+  <h1>DFA Simulator</h1>
+  <p class="sim-intro">Build a Deterministic Finite Automaton, then watch it consume an input string one symbol at a time.</p>
+</section>
+
+<section class="sim-panel">
+  <div class="sim-io">
+    <form id="dfaForm" class="sim-form" autocomplete="off">
+      <div class="builder-grid">
+        <div class="builder-fields">
+          <div class="field"><label for="states">States</label><input type="text" id="states" placeholder="q0, q1, q2"></div>
+          <div class="field"><label for="alphabet">Alphabet</label><input type="text" id="alphabet" placeholder="0, 1"></div>
+          <div class="field"><label for="startState">Start state</label><input type="text" id="startState" placeholder="q0"></div>
+          <div class="field"><label for="finalStates">Final states</label><input type="text" id="finalStates" placeholder="q1"></div>
+          <div class="field"><label for="inputString">Input string</label><input type="text" id="inputString" placeholder="00101"></div>
+        </div>
+        <div>
+          <label class="field-hint" style="display:block;margin-bottom:0.5rem;">Transitions</label>
+          <div id="transitionsEditor"></div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Run</button>
+        <span id="formError" class="form-error" role="alert" aria-live="polite"></span>
+      </div>
+    </form>
+
+  </div>
+
+  <div id="results" class="results" hidden>
+    <div class="run-layout">
+      <div>
+        <div id="graphContainer"></div>
+      </div>
+      <div>
+        <div class="sim-controls">
+          <button type="button" class="btn btn-ghost" id="btnStep">Step</button>
+          <button type="button" class="btn btn-ghost" id="btnRun">Run</button>
+          <button type="button" class="btn btn-ghost" id="btnPause">Pause</button>
+          <button type="button" class="btn btn-ghost" id="btnReset">Reset</button>
+          <span class="step-counter" id="stepCounter"></span>
+        </div>
+        <div id="verdict"></div>
+        <div id="simLog" class="sim-log"></div>
+      </div>
+    </div>
+
+    <h3 class="subhead">Transition table</h3>
+    <div class="transition-table-wrap" id="tableContainer"></div>
+  </div>
+</section>
+
+<section class="sim-info">
+  <p class="eyebrow">What is a DFA?</p>
+  <h2 class="section-title">Definition &amp; key terms</h2>
+  <div class="info-grid">
+    <div><h4>Definition</h4><p>A Deterministic Finite Automaton is a finite-state machine where each state has exactly one transition for every input symbol.</p></div>
+    <div><h4>Accept / Reject</h4><p>After the whole input string is consumed, the string is <strong>accepted</strong> if the machine ends in a final state, otherwise it's <strong>rejected</strong>.</p></div>
+    <div><h4>Determinism</h4><p>"Deterministic" means there is never a choice: from any state, one symbol leads to exactly one next state.</p></div>
+    <div><h4>How this simulator works</h4><p>Define states, alphabet, transitions, a start state and final states, then press Run. Step through the execution with the controls to see exactly which transition fires at each symbol.</p></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/visualization.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dfa.js') }}"></script>
+{% endblock %}

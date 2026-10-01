@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Regular Expression Simulator &mdash; TOC Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="sim-header">
+  <p class="eyebrow">Module 6 of 9</p>
+  <h1>Regular Expression Simulator</h1>
+  <p class="sim-intro">Enter a pattern and a string to test. The pattern is compiled into an epsilon-NFA with Thompson's Construction, and the string is run against that automaton &mdash; not matched with a black-box regex engine.</p>
+</section>
+
+<section class="sim-panel">
+  <div class="sim-io">
+    <form id="regexForm" class="sim-form" autocomplete="off">
+      <div class="field">
+        <label for="pattern">Pattern</label>
+        <input type="text" id="pattern" placeholder="(a|b)*abb" value="(a|b)*abb">
+        <p class="field-hint">Supports <code>|</code> (union), <code>*</code> (zero or more), <code>+</code> (one or more), <code>?</code> (optional), and <code>( )</code> grouping. Concatenation is implicit.</p>
+      </div>
+      <div class="field">
+        <label for="inputString">Test string</label>
+        <input type="text" id="inputString" placeholder="aabb" value="aabb">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Test</button>
+        <span id="formError" class="form-error" role="alert" aria-live="polite"></span>
+      </div>
+    </form>
+
+    <div class="examples">
+      <p class="examples-label">Load an example</p>
+      <div class="example-chips">
+        {% for ex in examples %}
+        <button type="button" class="chip" data-pattern="{{ ex.pattern }}" data-input="{{ ex.sample_input }}">{{ ex.label }}</button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div id="results" class="results" hidden>
+    <div class="run-layout">
+      <div><div id="graphContainer"></div></div>
+      <div>
+        <div class="sim-controls">
+          <button type="button" class="btn btn-ghost" id="btnStep">Step</button>
+          <button type="button" class="btn btn-ghost" id="btnRun">Run</button>
+          <button type="button" class="btn btn-ghost" id="btnPause">Pause</button>
+          <button type="button" class="btn btn-ghost" id="btnReset">Reset</button>
+          <span class="step-counter" id="stepCounter"></span>
+        </div>
+        <div id="verdict"></div>
+        <div id="simLog" class="sim-log"></div>
+      </div>
+    </div>
+    <h3 class="subhead">Compiled automaton &mdash; transition table</h3>
+    <div class="transition-table-wrap" id="tableContainer"></div>
+  </div>
+</section>
+
+<section class="sim-info">
+  <p class="eyebrow">What is a Regular Expression?</p>
+  <h2 class="section-title">Definition &amp; key terms</h2>
+  <div class="info-grid">
+    <div><h4>Definition</h4><p>A regular expression is a compact way to describe a set of strings using symbols, alternation, and repetition.</p></div>
+    <div><h4>Thompson's Construction</h4><p>A standard algorithm that turns any regular expression into an equivalent epsilon-NFA, piece by piece, following the expression's structure.</p></div>
+    <div><h4>Why not just match directly?</h4><p>Compiling to an automaton first is exactly how the theory connects regular expressions to finite automata &mdash; they describe the same class of languages.</p></div>
+    <div><h4>How this simulator works</h4><p>Your pattern is parsed, compiled into an automaton, and the test string is run against it symbol by symbol, exactly like the other automata modules.</p></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/visualization.js') }}"></script>
+<script src="{{ url_for('static', filename='js/regex.js') }}"></script>
+{% endblock %}

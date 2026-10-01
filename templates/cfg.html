@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}CFG Simulator &mdash; TOC Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="sim-header">
+  <p class="eyebrow">Module 7 of 9</p>
+  <h1>CFG Simulator</h1>
+  <p class="sim-intro">Enter a grammar's productions and a target string. The simulator searches for a leftmost derivation, shows it step by step alongside the rightmost derivation, and draws the parse tree.</p>
+</section>
+
+<section class="sim-panel">
+  <div class="sim-io">
+    <form id="cfgForm" class="sim-form" autocomplete="off">
+      <div class="field">
+        <label for="grammar">Productions</label>
+        <textarea id="grammar" rows="4" style="width:100%;background:var(--bg);border:1px solid var(--border-bright);color:var(--text-primary);border-radius:8px;padding:0.7rem 0.9rem;font-family:var(--font-mono);font-size:0.9rem;" placeholder="S -> aSb | eps"></textarea>
+        <p class="field-hint">One nonterminal (single uppercase letter) per line, e.g. <code>S -&gt; aSb | eps</code>. Use <code>eps</code> or <code>&#949;</code> for the empty production.</p>
+      </div>
+      <div class="field">
+        <label for="inputString">Target string</label>
+        <input type="text" id="inputString" placeholder="aaabbb">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Derive</button>
+        <span id="formError" class="form-error" role="alert" aria-live="polite"></span>
+      </div>
+    </form>
+
+    <div class="examples">
+      <p class="examples-label">Load an example</p>
+      <div class="example-chips">
+        {% for ex in examples %}
+        <button type="button" class="chip" data-grammar="{{ ex.grammar }}" data-input="{{ ex.sample_input }}">{{ ex.label }}</button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div id="results" class="results" hidden>
+    <div id="verdict"></div>
+
+    <div class="run-layout">
+      <div>
+        <h3 class="subhead">Leftmost derivation</h3>
+        <div id="leftmostList" class="derivation-list"></div>
+      </div>
+      <div>
+        <h3 class="subhead">Rightmost derivation</h3>
+        <div id="rightmostList" class="derivation-list"></div>
+      </div>
+    </div>
+
+    <h3 class="subhead">Parse tree</h3>
+    <div id="treeContainer"></div>
+  </div>
+</section>
+
+<section class="sim-info">
+  <p class="eyebrow">What is a CFG?</p>
+  <h2 class="section-title">Definition &amp; key terms</h2>
+  <div class="info-grid">
+    <div><h4>Definition</h4><p>A Context-Free Grammar generates strings by repeatedly rewriting nonterminal symbols using its productions, starting from the start symbol.</p></div>
+    <div><h4>Leftmost / rightmost derivation</h4><p>Two conventions for the <em>order</em> in which nonterminals are expanded &mdash; always the leftmost one, or always the rightmost one. Both can build the same parse tree.</p></div>
+    <div><h4>Parse tree</h4><p>A tree showing exactly which production was used to expand each nonterminal, with terminal symbols as its leaves.</p></div>
+    <div><h4>How this simulator works</h4><p>It searches (breadth-first) for a sequence of leftmost expansions that produces your target string, within a safety limit &mdash; well within reach for the small textbook grammars this tool targets.</p></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/visualization.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cfg.js') }}"></script>
+{% endblock %}

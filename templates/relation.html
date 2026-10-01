@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Relation & Function Simulator &mdash; TOC Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="sim-header">
+  <p class="eyebrow">Module 2 of 9</p>
+  <h1>Relation &amp; Function Simulator</h1>
+  <p class="sim-intro">Test the standard properties of a relation on a set, and analyze functions for injectivity, surjectivity, and composition.</p>
+</section>
+
+<!-- ============================ RELATION ============================ -->
+<section class="sim-panel">
+  <h2 class="section-title">Relation on a set</h2>
+  <div class="sim-io">
+    <form id="relationForm" class="sim-form" autocomplete="off">
+      <div class="field">
+        <label for="relSetA">Set A</label>
+        <input type="text" id="relSetA" placeholder="1, 2, 3">
+      </div>
+      <div class="field">
+        <label for="relPairs">Relation R (pairs)</label>
+        <input type="text" id="relPairs" placeholder="(1,1),(1,2),(2,2),(3,3)">
+        <p class="field-hint">Comma-separated ordered pairs, each written as <code>(a, b)</code>.</p>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Analyze relation</button>
+        <span id="relError" class="form-error" role="alert" aria-live="polite"></span>
+      </div>
+    </form>
+
+  </div>
+
+  <div id="relResults" class="results" hidden>
+    <div class="result-card" style="margin-bottom:1rem;">
+      <span class="result-label">R</span><span id="relPairsOut" class="result-value mono"></span>
+    </div>
+
+    <h3 class="subhead">Properties</h3>
+    <div class="check-grid" id="relChecks"></div>
+
+    <div class="run-layout" style="margin-top:1.5rem;">
+      <div>
+        <h3 class="subhead">Relation matrix</h3>
+        <div id="matrixContainer"></div>
+      </div>
+      <div>
+        <h3 class="subhead">Graph (nodes &amp; directed edges)</h3>
+        <div id="relGraphContainer"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FUNCTION ============================= -->
+<section class="sim-panel">
+  <h2 class="section-title">Function f: A &rarr; B</h2>
+  <div class="sim-io">
+    <form id="functionForm" class="sim-form" autocomplete="off">
+      <div class="builder-grid">
+        <div class="builder-fields">
+          <div class="field"><label for="domain">Domain (A)</label><input type="text" id="domain" placeholder="1, 2, 3"></div>
+          <div class="field"><label for="codomain">Codomain (B)</label><input type="text" id="codomain" placeholder="4, 5, 6"></div>
+          <div class="field"><label for="mapping">Mapping f (pairs)</label><input type="text" id="mapping" placeholder="(1,4),(2,5),(3,6)"></div>
+        </div>
+        <div class="builder-fields">
+          <div class="field"><label for="codomainC">Codomain of g (C) &mdash; optional, for composition</label><input type="text" id="codomainC" placeholder="e.g. 7, 8, 9"></div>
+          <div class="field"><label for="mappingG">Mapping g: B &rarr; C (pairs) &mdash; optional</label><input type="text" id="mappingG" placeholder="(4,7),(5,8),(6,9)"></div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Analyze function</button>
+        <span id="funcError" class="form-error" role="alert" aria-live="polite"></span>
+      </div>
+    </form>
+
+  </div>
+
+  <div id="funcResults" class="results" hidden>
+    <h3 class="subhead">Properties</h3>
+    <div class="check-grid" id="funcChecks"></div>
+
+    <div class="result-grid" style="margin-top:1rem;">
+      <div class="result-card wide"><span class="result-label">Mapping f</span><span id="mappingOut" class="result-value mono"></span></div>
+      <div class="result-card wide" id="inverseCard" hidden><span class="result-label">f&#8315;&sup1; (inverse, since f is bijective)</span><span id="inverseOut" class="result-value mono"></span></div>
+    </div>
+
+    <div id="composeSection" hidden>
+      <h3 class="subhead">Composition g&#8728;f</h3>
+      <div class="check-grid" id="gChecks"></div>
+      <div class="result-card wide" style="margin-top:1rem;"><span class="result-label">g&#8728;f</span><span id="composedOut" class="result-value mono"></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sim-info">
+  <p class="eyebrow">What are Relations &amp; Functions?</p>
+  <h2 class="section-title">Definitions &amp; key terms</h2>
+  <div class="info-grid">
+    <div><h4>Relation</h4><p>A relation on a set A is simply a collection of ordered pairs (a, b) with a, b &isin; A &mdash; it doesn't need to follow any rule.</p></div>
+    <div><h4>Reflexive, Symmetric, Transitive</h4><p>Reflexive: every element relates to itself. Symmetric: (a,b) in R implies (b,a) in R. Transitive: (a,b) and (b,c) in R implies (a,c) in R.</p></div>
+    <div><h4>Function</h4><p>A function from A to B assigns <em>exactly one</em> output in B to every input in A &mdash; that's what makes it different from a general relation.</p></div>
+    <div><h4>Injective, Surjective, Bijective</h4><p>Injective: no two inputs share an output. Surjective: every element of B is hit. Bijective: both at once &mdash; and only then does an inverse function exist.</p></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/visualization.js') }}"></script>
+<script src="{{ url_for('static', filename='js/relation.js') }}"></script>
+{% endblock %}

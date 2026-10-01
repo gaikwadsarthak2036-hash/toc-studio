@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}&#949;-NFA Simulator &mdash; TOC Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="sim-header">
+  <p class="eyebrow">Module 5 of 9</p>
+  <h1>&#949;-NFA Simulator</h1>
+  <p class="sim-intro">Add epsilon (free) transitions on top of an NFA, and see epsilon closures computed for every state.</p>
+</section>
+
+<section class="sim-panel">
+  <div class="sim-io">
+    <form id="enfaForm" class="sim-form" autocomplete="off">
+      <div class="builder-grid">
+        <div class="builder-fields">
+          <div class="field"><label for="states">States</label><input type="text" id="states" placeholder="q0, q1, q2"></div>
+          <div class="field"><label for="alphabet">Alphabet (no epsilon)</label><input type="text" id="alphabet" placeholder="a, b"></div>
+          <div class="field"><label for="startState">Start state</label><input type="text" id="startState" placeholder="q0"></div>
+          <div class="field"><label for="finalStates">Final states</label><input type="text" id="finalStates" placeholder="q2"></div>
+          <div class="field"><label for="inputString">Input string</label><input type="text" id="inputString" placeholder="abb"></div>
+        </div>
+        <div>
+          <label class="field-hint" style="display:block;margin-bottom:0.5rem;">Transitions &mdash; use "eps" for an epsilon move</label>
+          <div id="transitionsEditor"></div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Run</button>
+        <span id="formError" class="form-error" role="alert" aria-live="polite"></span>
+      </div>
+    </form>
+
+  </div>
+
+  <div id="results" class="results" hidden>
+    <div class="run-layout">
+      <div><div id="graphContainer"></div></div>
+      <div>
+        <div class="sim-controls">
+          <button type="button" class="btn btn-ghost" id="btnStep">Step</button>
+          <button type="button" class="btn btn-ghost" id="btnRun">Run</button>
+          <button type="button" class="btn btn-ghost" id="btnPause">Pause</button>
+          <button type="button" class="btn btn-ghost" id="btnReset">Reset</button>
+          <span class="step-counter" id="stepCounter"></span>
+        </div>
+        <div id="verdict"></div>
+        <div id="simLog" class="sim-log"></div>
+      </div>
+    </div>
+
+    <h3 class="subhead">&#949;-closure of every state</h3>
+    <div class="check-grid" id="closureGrid"></div>
+
+    <h3 class="subhead">Transition table</h3>
+    <div class="transition-table-wrap" id="tableContainer"></div>
+
+    <h3 class="subhead">Optional: equivalent NFA (epsilon transitions folded in)</h3>
+    <div class="transition-table-wrap" id="nfaConversionContainer"></div>
+  </div>
+</section>
+
+<section class="sim-info">
+  <p class="eyebrow">What is an &#949;-NFA?</p>
+  <h2 class="section-title">Definition &amp; key terms</h2>
+  <div class="info-grid">
+    <div><h4>Definition</h4><p>An epsilon-NFA is an NFA that can also move between states "for free", without consuming any input symbol.</p></div>
+    <div><h4>Epsilon closure</h4><p>The epsilon closure of a state is every state reachable using only epsilon moves &mdash; including the state itself.</p></div>
+    <div><h4>Running it</h4><p>Before and after consuming each symbol, the simulator expands the active states to their full epsilon closure.</p></div>
+    <div><h4>Equivalence</h4><p>Every epsilon-NFA can be converted into a plain NFA (and from there into a DFA) with no change in the language it accepts.</p></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/visualization.js') }}"></script>
+<script src="{{ url_for('static', filename='js/enfa.js') }}"></script>
+{% endblock %}

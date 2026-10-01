@@ -1,0 +1,205 @@
+/* =========================================================================
+   TOC Studio — design tokens
+   Palette is built around the idea of a "state diagram at night": a deep
+   graphite background, a cyan accent for the transition currently being
+   executed, and an amber accent for a final / accepting state.
+   ========================================================================= */
+:root {
+  --bg: #0F1420;
+  --surface: #161D2E;
+  --surface-alt: #1C2540;
+  --border: #26314A;
+  --border-bright: #37456B;
+
+  --text-primary: #E9EDF6;
+  --text-muted: #8C97AF;
+  --text-faint: #5C6884;
+
+  --accent-cyan: #5EEAD4;
+  --accent-cyan-dim: rgba(94, 234, 212, 0.14);
+  --accent-amber: #F5A623;
+  --accent-amber-dim: rgba(245, 166, 35, 0.16);
+
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 20px;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --max-width: 1180px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.5em;
+  letter-spacing: -0.01em;
+}
+
+p { margin: 0 0 1em; color: var(--text-muted); }
+
+a { color: inherit; text-decoration: none; }
+
+:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  margin: 0 0 0.75em;
+}
+.eyebrow.center { text-align: center; }
+
+.section-title {
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  max-width: 42ch;
+  margin-bottom: 1.2em;
+}
+.section-title.center { max-width: none; text-align: center; margin-left: auto; margin-right: auto; }
+
+section {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 5rem 2rem;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  padding: 0.75em 1.4em;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.92rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+
+.btn-primary {
+  background: var(--accent-cyan);
+  color: #0B1220;
+}
+.btn-primary:hover { background: #7FF1DD; }
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--border-bright);
+  color: var(--text-primary);
+}
+.btn-ghost:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+
+.btn-card {
+  width: 100%;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  margin-top: 0.5rem;
+}
+.btn-card:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+.btn-disabled {
+  opacity: 0.55;
+  cursor: default;
+  pointer-events: auto;
+}
+.btn-disabled:hover { transform: none; border-color: var(--border); color: var(--text-primary); }
+
+/* ---------- Nav ---------- */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 2rem;
+  background: rgba(15, 20, 32, 0.86);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+.brand-mark { color: var(--accent-cyan); display: inline-flex; }
+.brand-text em { font-style: normal; color: var(--accent-cyan); }
+
+.nav-links { display: flex; gap: 1.75rem; }
+.nav-links a { color: var(--text-muted); font-size: 0.92rem; font-weight: 500; transition: color 0.15s ease; }
+.nav-links a:hover { color: var(--text-primary); }
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+.nav-toggle span { width: 22px; height: 2px; background: var(--text-primary); border-radius: 2px; }
+
+/* ---------- Footer ---------- */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem;
+}
+.footer-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  justify-content: space-between;
+  color: var(--text-faint);
+  font-size: 0.85rem;
+}
+.footer-modules { font-family: var(--font-mono); font-size: 0.78rem; }
+
+/* ---------- Coming soon page ---------- */
+.coming-soon {
+  text-align: center;
+  padding-top: 8rem;
+  padding-bottom: 8rem;
+}
+.coming-soon h1 { font-size: 2rem; margin-bottom: 0.4em; }
+.coming-soon .btn { margin-top: 1.5rem; }

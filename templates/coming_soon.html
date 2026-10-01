@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} &mdash; TOC Studio{% endblock %}
+
+{% block content %}
+<section class="coming-soon">
+  <p class="eyebrow">Module in progress</p>
+  <h1>{{ title }}</h1>
+  <p>This module is planned for a later build phase and isn't wired up yet.</p>
+  <a class="btn btn-primary" href="{{ url_for('index') }}">Back to dashboard</a>
+</section>
+{% endblock %}
