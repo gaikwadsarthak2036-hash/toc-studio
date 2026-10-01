@@ -1,155 +1,807 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}TOC Studio{% endblock %}</title>
 
-{% block title %}TOC Studio &mdash; Theory of Computation Simulator{% endblock %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+{% block extra_css %}{% endblock %}
+</head>
 
-<!-- ============================= HERO ============================= -->
-<section class="hero">
-  <div class="hero-copy">
-    <p class="eyebrow">Interactive Learning Platform for DSCAT</p>
-    <h1>Theory of Computation<br><span class="accent">Simulator</span></h1>
-    <p class="hero-tagline">Visualize. Simulate. Understand.</p>
-    <p class="hero-sub">
-      Nine modules covering Discrete Structures and Computational Theory &mdash;
-      from set operations to Turing machines &mdash; each one built to be run,
-      watched, and re-run until the concept clicks.
-    </p>
-    <div class="hero-actions">
-      <a href="#modules" class="btn btn-primary">Explore modules</a>
-      <a href="#how-it-works" class="btn btn-ghost">How it works</a>
-    </div>
-  </div>
+<body>
 
-  <div class="hero-visual" aria-hidden="true">
-    <!-- Signature element: a small automaton that runs itself, continuously
-         tracing the same accept path a student would trace by hand. -->
-    <svg id="heroAutomaton" viewBox="0 0 360 320" role="img">
-      <defs>
-        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M0,0 L10,5 L0,10 z" fill="var(--border-bright)"></path>
-        </marker>
-      </defs>
+<header class="site-nav">
+  <a class="brand" href="{{ url_for('index') }}">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" width="26" height="26">
+        <circle cx="9" cy="16" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="23" cy="16" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+        <line x1="15" y1="16" x2="17" y2="16" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    </span>
 
-      <!-- edges -->
-      <g class="edges" fill="none" stroke="var(--border-bright)" stroke-width="1.5">
-        <path id="edge-0" d="M85,70 L165,55" marker-end="url(#arrow)"></path>
-        <path id="edge-1" d="M195,65 L255,140" marker-end="url(#arrow)"></path>
-        <path id="edge-2" d="M270,175 L215,245" marker-end="url(#arrow)"></path>
-        <path id="edge-3" d="M180,258 L100,230" marker-end="url(#arrow)"></path>
-        <path id="edge-4" d="M70,205 L65,105" marker-end="url(#arrow)"></path>
-      </g>
+    <span class="brand-text">TOC<em>Studio</em></span>
+  </a>
 
-      <!-- start marker -->
-      <path d="M20,60 L55,65" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrow)" fill="none"></path>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="{{ url_for('index') }}#modules">Modules</a>
+    <a href="{{ url_for('index') }}#how-it-works">How it works</a>
+    <a href="{{ url_for('index') }}#about">About</a>
+    <a href="{{ url_for('index') }}#help">Help</a>
+  </nav>
 
-      <!-- states -->
-      <g class="states" font-family="var(--font-mono)" font-size="13" text-anchor="middle">
-        <g class="state" id="state-0" transform="translate(60,65)">
-          <circle r="26"></circle><text dy="5" fill="var(--text-primary)">q0</text>
-        </g>
-        <g class="state" id="state-1" transform="translate(185,50)">
-          <circle r="26"></circle><text dy="5" fill="var(--text-primary)">q1</text>
-        </g>
-        <g class="state" id="state-2" transform="translate(275,160)">
-          <circle r="26"></circle><text dy="5" fill="var(--text-primary)">q2</text>
-        </g>
-        <g class="state final" id="state-3" transform="translate(200,260)">
-          <circle r="26"></circle><circle r="20"></circle><text dy="5" fill="var(--text-primary)">q3</text>
-        </g>
-        <g class="state" id="state-4" transform="translate(70,225)">
-          <circle r="26"></circle><text dy="5" fill="var(--text-primary)">q4</text>
-        </g>
-      </g>
-    </svg>
-    <p class="hero-visual-caption">Live preview &mdash; this is what a DFA run looks like inside the simulator</p>
-  </div>
-</section>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</header>
 
-<!-- =========================== MODULES ============================= -->
-<section id="modules" class="modules">
-  <p class="eyebrow center">Nine modules, one platform</p>
-  <h2 class="section-title center">Pick a topic to open its simulator</h2>
+<main>
+  {% block content %}
 
-  <div class="module-grid">
-    {% for m in modules %}
-    <article class="module-card">
-      <div class="module-icon icon-{{ m.icon }}" aria-hidden="true">
-        {% if m.icon == 'set' %}
-        <svg viewBox="0 0 40 40"><circle cx="16" cy="20" r="12" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="26" cy="20" r="12" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-        {% elif m.icon == 'relation' %}
-        <svg viewBox="0 0 40 40"><circle cx="9" cy="10" r="4" fill="currentColor"/><circle cx="9" cy="30" r="4" fill="currentColor"/><circle cx="31" cy="20" r="4" fill="currentColor"/><line x1="9" y1="10" x2="31" y2="20" stroke="currentColor" stroke-width="2"/><line x1="9" y1="30" x2="31" y2="20" stroke="currentColor" stroke-width="2"/><line x1="9" y1="10" x2="9" y2="30" stroke="currentColor" stroke-width="2"/></svg>
-        {% elif m.icon == 'dfa' %}
-        <svg viewBox="0 0 40 40"><circle cx="14" cy="20" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="30" cy="20" r="7" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="30" cy="20" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M23,20 L26,20" stroke="currentColor" stroke-width="2" marker-end="url(#arrow)"/></svg>
-        {% elif m.icon == 'nfa' %}
-        <svg viewBox="0 0 40 40"><circle cx="10" cy="20" r="7" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="31" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="31" cy="31" r="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16" y1="16" x2="25" y2="10" stroke="currentColor" stroke-width="2"/><line x1="16" y1="24" x2="25" y2="30" stroke="currentColor" stroke-width="2"/></svg>
-        {% elif m.icon == 'enfa' %}
-        <svg viewBox="0 0 40 40"><circle cx="13" cy="20" r="8" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="29" cy="20" r="8" fill="none" stroke="currentColor" stroke-width="2"/><text x="20" y="24" font-size="11" text-anchor="middle" fill="currentColor">&#949;</text></svg>
-        {% elif m.icon == 'regex' %}
-        <svg viewBox="0 0 40 40"><text x="20" y="26" font-size="20" text-anchor="middle" fill="currentColor" font-family="monospace">.*</text></svg>
-        {% elif m.icon == 'cfg' %}
-        <svg viewBox="0 0 40 40"><circle cx="20" cy="8" r="4" fill="currentColor"/><circle cx="10" cy="24" r="4" fill="currentColor"/><circle cx="30" cy="24" r="4" fill="currentColor"/><circle cx="30" cy="34" r="3" fill="currentColor"/><line x1="20" y1="8" x2="10" y2="24" stroke="currentColor" stroke-width="2"/><line x1="20" y1="8" x2="30" y2="24" stroke="currentColor" stroke-width="2"/><line x1="30" y1="24" x2="30" y2="34" stroke="currentColor" stroke-width="2"/></svg>
-        {% elif m.icon == 'pda' %}
-        <svg viewBox="0 0 40 40"><rect x="12" y="6" width="16" height="8" fill="none" stroke="currentColor" stroke-width="2"/><rect x="12" y="15" width="16" height="8" fill="none" stroke="currentColor" stroke-width="2"/><rect x="12" y="24" width="16" height="8" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-        {% elif m.icon == 'tm' %}
-        <svg viewBox="0 0 40 40"><rect x="4" y="16" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2"/><rect x="12" y="16" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2"/><rect x="20" y="16" width="8" height="8" fill="currentColor"/><rect x="28" y="16" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M24,16 L24,10" stroke="currentColor" stroke-width="2" marker-end="url(#arrow)"/></svg>
-        {% endif %}
+  <!-- ============================= HERO ============================= -->
+
+  <section class="hero">
+    <div class="hero-copy">
+
+      <p class="eyebrow">Interactive Learning Platform for DSCAT</p>
+
+      <h1>
+        Theory of Computation<br>
+        <span class="accent">Simulator</span>
+      </h1>
+
+      <p class="hero-tagline">Visualize. Simulate. Understand.</p>
+
+      <p class="hero-sub">
+        Nine modules covering Discrete Structures and Computational Theory
+        &mdash; from set operations to Turing machines &mdash; each one built
+        to be run, watched, and re-run until the concept clicks.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#modules" class="btn btn-primary">Explore modules</a>
+        <a href="#how-it-works" class="btn btn-ghost">How it works</a>
       </div>
-      <h3>{{ m.name }}</h3>
-      <p>{{ m.description }}</p>
-      <a class="btn btn-card {% if not m.available %}btn-disabled{% endif %}" href="{{ m.route }}">
-        {% if m.available %}Open Simulator{% else %}Coming soon{% endif %}
-      </a>
-    </article>
-    {% endfor %}
+
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+
+      <svg id="heroAutomaton" viewBox="0 0 360 320" role="img">
+
+        <defs>
+          <marker
+            id="arrow"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="6"
+            markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--border-bright)"></path>
+          </marker>
+        </defs>
+
+        <!-- edges -->
+        <g class="edges" fill="none" stroke="var(--border-bright)" stroke-width="1.5">
+
+          <path
+            id="edge-0"
+            d="M85,70 L165,55"
+            marker-end="url(#arrow)">
+          </path>
+
+          <path
+            id="edge-1"
+            d="M195,65 L255,140"
+            marker-end="url(#arrow)">
+          </path>
+
+          <path
+            id="edge-2"
+            d="M270,175 L215,245"
+            marker-end="url(#arrow)">
+          </path>
+
+          <path
+            id="edge-3"
+            d="M180,258 L100,230"
+            marker-end="url(#arrow)">
+          </path>
+
+          <path
+            id="edge-4"
+            d="M70,205 L65,105"
+            marker-end="url(#arrow)">
+          </path>
+
+        </g>
+
+        <!-- start marker -->
+        <path
+          d="M20,60 L55,65"
+          stroke="var(--text-muted)"
+          stroke-width="1.5"
+          marker-end="url(#arrow)"
+          fill="none">
+        </path>
+
+        <!-- states -->
+        <g
+          class="states"
+          font-family="var(--font-mono)"
+          font-size="13"
+          text-anchor="middle">
+
+          <g
+            class="state"
+            id="state-0"
+            transform="translate(60,65)">
+
+            <circle r="26"></circle>
+            <text dy="5" fill="var(--text-primary)">q0</text>
+
+          </g>
+
+          <g
+            class="state"
+            id="state-1"
+            transform="translate(185,50)">
+
+            <circle r="26"></circle>
+            <text dy="5" fill="var(--text-primary)">q1</text>
+
+          </g>
+
+          <g
+            class="state"
+            id="state-2"
+            transform="translate(275,160)">
+
+            <circle r="26"></circle>
+            <text dy="5" fill="var(--text-primary)">q2</text>
+
+          </g>
+
+          <g
+            class="state final"
+            id="state-3"
+            transform="translate(200,260)">
+
+            <circle r="26"></circle>
+            <circle r="20"></circle>
+            <text dy="5" fill="var(--text-primary)">q3</text>
+
+          </g>
+
+          <g
+            class="state"
+            id="state-4"
+            transform="translate(70,225)">
+
+            <circle r="26"></circle>
+            <text dy="5" fill="var(--text-primary)">q4</text>
+
+          </g>
+
+        </g>
+
+      </svg>
+
+      <p class="hero-visual-caption">
+        Live preview &mdash; this is what a DFA run looks like inside the simulator
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================== MODULES ============================= -->
+
+  <section id="modules" class="modules">
+
+    <p class="eyebrow center">
+      Nine modules, one platform
+    </p>
+
+    <h2 class="section-title center">
+      Pick a topic to open its simulator
+    </h2>
+
+    <div class="module-grid">
+
+      {% for m in modules %}
+
+      <article class="module-card">
+
+        <div
+          class="module-icon icon-{{ m.icon }}"
+          aria-hidden="true">
+
+          {% if m.icon == 'set' %}
+
+          <svg viewBox="0 0 40 40">
+            <circle
+              cx="16"
+              cy="20"
+              r="12"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <circle
+              cx="26"
+              cy="20"
+              r="12"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+          </svg>
+
+          {% elif m.icon == 'relation' %}
+
+          <svg viewBox="0 0 40 40">
+
+            <circle
+              cx="9"
+              cy="10"
+              r="4"
+              fill="currentColor"/>
+
+            <circle
+              cx="9"
+              cy="30"
+              r="4"
+              fill="currentColor"/>
+
+            <circle
+              cx="31"
+              cy="20"
+              r="4"
+              fill="currentColor"/>
+
+            <line
+              x1="9"
+              y1="10"
+              x2="31"
+              y2="20"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <line
+              x1="9"
+              y1="30"
+              x2="31"
+              y2="20"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <line
+              x1="9"
+              y1="10"
+              x2="9"
+              y2="30"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+          </svg>
+
+          {% elif m.icon == 'dfa' %}
+
+          <svg viewBox="0 0 40 40">
+
+            <circle
+              cx="14"
+              cy="20"
+              r="9"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <circle
+              cx="30"
+              cy="20"
+              r="7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <circle
+              cx="30"
+              cy="20"
+              r="4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <path
+              d="M23,20 L26,20"
+              stroke="currentColor"
+              stroke-width="2"
+              marker-end="url(#arrow)"/>
+
+          </svg>
+
+          {% elif m.icon == 'nfa' %}
+
+          <svg viewBox="0 0 40 40">
+
+            <circle
+              cx="10"
+              cy="20"
+              r="7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <circle
+              cx="31"
+              cy="9"
+              r="6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <circle
+              cx="31"
+              cy="31"
+              r="6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <line
+              x1="16"
+              y1="16"
+              x2="25"
+              y2="10"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <line
+              x1="16"
+              y1="24"
+              x2="25"
+              y2="30"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+          </svg>
+
+          {% elif m.icon == 'enfa' %}
+
+          <svg viewBox="0 0 40 40">
+
+            <circle
+              cx="13"
+              cy="20"
+              r="8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <circle
+              cx="29"
+              cy="20"
+              r="8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <text
+              x="20"
+              y="24"
+              font-size="11"
+              text-anchor="middle"
+              fill="currentColor">
+              &#949;
+            </text>
+
+          </svg>
+
+          {% elif m.icon == 'regex' %}
+
+          <svg viewBox="0 0 40 40">
+            <text
+              x="20"
+              y="26"
+              font-size="20"
+              text-anchor="middle"
+              fill="currentColor"
+              font-family="monospace">
+              .*
+            </text>
+          </svg>
+
+          {% elif m.icon == 'cfg' %}
+
+          <svg viewBox="0 0 40 40">
+
+            <circle
+              cx="20"
+              cy="8"
+              r="4"
+              fill="currentColor"/>
+
+            <circle
+              cx="10"
+              cy="24"
+              r="4"
+              fill="currentColor"/>
+
+            <circle
+              cx="30"
+              cy="24"
+              r="4"
+              fill="currentColor"/>
+
+            <circle
+              cx="30"
+              cy="34"
+              r="3"
+              fill="currentColor"/>
+
+            <line
+              x1="20"
+              y1="8"
+              x2="10"
+              y2="24"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <line
+              x1="20"
+              y1="8"
+              x2="30"
+              y2="24"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <line
+              x1="30"
+              y1="24"
+              x2="30"
+              y2="34"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+          </svg>
+
+          {% elif m.icon == 'pda' %}
+
+          <svg viewBox="0 0 40 40">
+
+            <rect
+              x="12"
+              y="6"
+              width="16"
+              height="8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <rect
+              x="12"
+              y="15"
+              width="16"
+              height="8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <rect
+              x="12"
+              y="24"
+              width="16"
+              height="8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+          </svg>
+
+          {% elif m.icon == 'tm' %}
+
+          <svg viewBox="0 0 40 40">
+
+            <rect
+              x="4"
+              y="16"
+              width="8"
+              height="8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <rect
+              x="12"
+              y="16"
+              width="8"
+              height="8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <rect
+              x="20"
+              y="16"
+              width="8"
+              height="8"
+              fill="currentColor"/>
+
+            <rect
+              x="28"
+              y="16"
+              width="8"
+              height="8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"/>
+
+            <path
+              d="M24,16 L24,10"
+              stroke="currentColor"
+              stroke-width="2"
+              marker-end="url(#arrow)"/>
+
+          </svg>
+
+          {% endif %}
+
+        </div>
+
+
+        <h3>{{ m.name }}</h3>
+
+        <p>{{ m.description }}</p>
+
+
+        <!--
+          MID-SEM TEMPORARY CONTROL
+
+          Only modules up to ε-NFA are active.
+          Regex, CFG, PDA and Turing Machine are shown as
+          Loading and cannot open another webpage.
+        -->
+
+        {% if m.icon in ['regex', 'cfg', 'pda', 'tm'] %}
+
+        <button
+          type="button"
+          class="btn btn-card btn-disabled"
+          disabled
+          aria-disabled="true">
+
+          Loading...
+
+        </button>
+
+        {% else %}
+
+        <a
+          class="btn btn-card {% if not m.available %}btn-disabled{% endif %}"
+          href="{{ m.route }}">
+
+          {% if m.available %}
+            Open Simulator
+          {% else %}
+            Coming soon
+          {% endif %}
+
+        </a>
+
+        {% endif %}
+
+      </article>
+
+      {% endfor %}
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================= HOW IT WORKS =========================== -->
+
+  <section id="how-it-works" class="how-it-works">
+
+    <p class="eyebrow center">
+      Every module follows the same rhythm
+    </p>
+
+    <h2 class="section-title center">
+      How it works
+    </h2>
+
+    <ol class="steps">
+
+      <li>
+        <span class="step-index">1</span>
+        <h4>Select a topic</h4>
+        <p>
+          Choose any module from the dashboard, from Sets all the way to
+          Turing Machines.
+        </p>
+      </li>
+
+      <li>
+        <span class="step-index">2</span>
+        <h4>Create your model</h4>
+        <p>
+          Define states, transitions, grammars or sets using the on-screen
+          builder &mdash; no code required.
+        </p>
+      </li>
+
+      <li>
+        <span class="step-index">3</span>
+        <h4>Enter input</h4>
+        <p>
+          Type the string, pair of sets, or expression you want to test.
+        </p>
+      </li>
+
+      <li>
+        <span class="step-index">4</span>
+        <h4>Run the simulation</h4>
+        <p>
+          Step through it one transition at a time, or let it run automatically.
+        </p>
+      </li>
+
+      <li>
+        <span class="step-index">5</span>
+        <h4>Visualize the result</h4>
+        <p>
+          See the diagram, tree, tape or stack update live, ending in a clear
+          Accepted / Rejected verdict.
+        </p>
+      </li>
+
+    </ol>
+
+  </section>
+
+
+  <!-- =========================== FEATURES ============================= -->
+
+  <section class="features">
+
+    <div class="feature">
+      <h4>Interactive simulation</h4>
+      <p>
+        Every model you build actually runs &mdash; nothing is a static diagram.
+      </p>
+    </div>
+
+    <div class="feature">
+      <h4>Step-by-step execution</h4>
+      <p>
+        Move one transition at a time and read the log as it grows.
+      </p>
+    </div>
+
+    <div class="feature">
+      <h4>Visual state diagrams</h4>
+      <p>
+        States, arrows, stacks and tapes are drawn, not just described.
+      </p>
+    </div>
+
+    <div class="feature">
+      <h4>Input validation</h4>
+      <p>
+        Friendly messages catch mistakes before they become confusion.
+      </p>
+    </div>
+
+    <div class="feature">
+      <h4>Educational explanations</h4>
+      <p>
+        Every simulator opens with the definition and terms it needs.
+      </p>
+    </div>
+
+  </section>
+
+
+  <!-- ============================= ABOUT ============================== -->
+
+  <section id="about" class="about">
+
+    <p class="eyebrow">
+      About the project
+    </p>
+
+    <h2 class="section-title">
+      Learning Theory of Computation by running it, not just reading it
+    </h2>
+
+    <p>
+      TOC Studio brings together Discrete Structures and Computational Theory
+      (DSCAT) into one place: sets, relations and functions, finite automata,
+      regular expressions, context-free grammars, pushdown automata, and
+      Turing machines. Instead of tracing transitions on paper, students
+      define their own models and watch them execute, making abstract
+      definitions concrete.
+    </p>
+
+  </section>
+
+
+  <!-- ============================= HELP ============================== -->
+
+  <section id="help" class="help">
+
+    <p class="eyebrow">
+      Help &amp; instructions
+    </p>
+
+    <h2 class="section-title">
+      Getting started
+    </h2>
+
+    <div class="help-grid">
+
+      <div>
+        <h4>New to a topic?</h4>
+        <p>
+          Open its simulator and read the "What is it?" panel before building
+          your own model.
+        </p>
+      </div>
+
+      <div>
+        <h4>Not sure what to try first?</h4>
+        <p>
+          Start with the Set Operations module, then build your own relations,
+          functions and automata from scratch in the later modules.
+        </p>
+      </div>
+
+      <div>
+        <h4>Something looks wrong?</h4>
+        <p>
+          The simulator will explain input errors in plain language instead
+          of a technical error message.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  {% endblock %}
+</main>
+
+<footer class="site-footer">
+
+  <div class="footer-inner">
+
+    <span>
+      TOC Studio &mdash; built for DSCAT lab work and self-learning.
+    </span>
+
+    <span class="footer-modules">
+      Sets &middot; Relations &middot; DFA &middot; NFA &middot; &#949;-NFA
+      &middot; Regex &middot; CFG &middot; PDA &middot; Turing Machine
+    </span>
+
   </div>
-</section>
 
-<!-- ========================= HOW IT WORKS =========================== -->
-<section id="how-it-works" class="how-it-works">
-  <p class="eyebrow center">Every module follows the same rhythm</p>
-  <h2 class="section-title center">How it works</h2>
+</footer>
 
-  <ol class="steps">
-    <li><span class="step-index">1</span><h4>Select a topic</h4><p>Choose any module from the dashboard, from Sets all the way to Turing Machines.</p></li>
-    <li><span class="step-index">2</span><h4>Create your model</h4><p>Define states, transitions, grammars or sets using the on-screen builder &mdash; no code required.</p></li>
-    <li><span class="step-index">3</span><h4>Enter input</h4><p>Type the string, pair of sets, or expression you want to test.</p></li>
-    <li><span class="step-index">4</span><h4>Run the simulation</h4><p>Step through it one transition at a time, or let it run automatically.</p></li>
-    <li><span class="step-index">5</span><h4>Visualize the result</h4><p>See the diagram, tree, tape or stack update live, ending in a clear Accepted / Rejected verdict.</p></li>
-  </ol>
-</section>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
-<!-- =========================== FEATURES ============================= -->
-<section class="features">
-  <div class="feature"><h4>Interactive simulation</h4><p>Every model you build actually runs &mdash; nothing is a static diagram.</p></div>
-  <div class="feature"><h4>Step-by-step execution</h4><p>Move one transition at a time and read the log as it grows.</p></div>
-  <div class="feature"><h4>Visual state diagrams</h4><p>States, arrows, stacks and tapes are drawn, not just described.</p></div>
-  <div class="feature"><h4>Input validation</h4><p>Friendly messages catch mistakes before they become confusion.</p></div>
-  <div class="feature"><h4>Educational explanations</h4><p>Every simulator opens with the definition and terms it needs.</p></div>
-</section>
+{% block extra_js %}{% endblock %}
 
-<!-- ============================= ABOUT ============================== -->
-<section id="about" class="about">
-  <p class="eyebrow">About the project</p>
-  <h2 class="section-title">Learning Theory of Computation by running it, not just reading it</h2>
-  <p>
-    TOC Studio brings together Discrete Structures and Computational Theory (DSCAT)
-    into one place: sets, relations and functions, finite automata, regular expressions,
-    context-free grammars, pushdown automata, and Turing machines. Instead of tracing
-    transitions on paper, students define their own models and watch them execute,
-    making abstract definitions concrete.
-  </p>
-</section>
-
-<!-- ============================= HELP ============================== -->
-<section id="help" class="help">
-  <p class="eyebrow">Help &amp; instructions</p>
-  <h2 class="section-title">Getting started</h2>
-  <div class="help-grid">
-    <div><h4>New to a topic?</h4><p>Open its simulator and read the "What is it?" panel before building your own model.</p></div>
-    <div><h4>Not sure what to try first?</h4><p>Start with the Set Operations module, then build your own relations, functions and automata from scratch in the later modules.</p></div>
-    <div><h4>Something looks wrong?</h4><p>The simulator will explain input errors in plain language instead of a technical error message.</p></div>
-  </div>
-</section>
-
-{% endblock %}
+</body>
+</html>
