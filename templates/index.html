@@ -564,41 +564,12 @@
         <p>{{ m.description }}</p>
 
 
-        <!--
-          MID-SEM TEMPORARY CONTROL
-
-          Only modules up to ε-NFA are active.
-          Regex, CFG, PDA and Turing Machine are shown as
-          Loading and cannot open another webpage.
-        -->
-
-        {% if m.icon in ['regex', 'cfg', 'pda', 'tm'] %}
-
-        <button
-          type="button"
-          class="btn btn-card btn-disabled"
-          disabled
-          aria-disabled="true">
-
-          Loading...
-
-        </button>
-
-        {% else %}
-
+        <!-- All module cards use their configured Flask route. -->
         <a
-          class="btn btn-card {% if not m.available %}btn-disabled{% endif %}"
+          class="btn btn-card"
           href="{{ m.route }}">
-
-          {% if m.available %}
-            Open Simulator
-          {% else %}
-            Coming soon
-          {% endif %}
-
+          Open Simulator
         </a>
-
-        {% endif %}
 
       </article>
 
